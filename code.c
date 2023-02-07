@@ -3,6 +3,9 @@
 #include "GPIO.h"
 #include "SYS_INIT.h"
 
+#include<stdio.h>
+#include<stdlib.h>
+
 //vertical GPIOA
 //horizontal GPIOB
 
@@ -29,13 +32,13 @@
 #define LR_yellow 4
 #define LR_green 5
 
-//GPIOA 
+//GPIOB
 #define R_1 13
 #define R_2 14
-#define R_3 15
+#define R_3 15 //2
 
 #define L_1 10
-#define L_2 11
+#define L_2 11 //1
 #define L_3 12
 
 
@@ -43,10 +46,14 @@
 #define UDMOVE GPIOA
 #define LRMOVE GPIOB
 
+uint16_t trafficU=0,trafficD=0,trafficL=0,trafficR=0; //traffic count
+uint16_t UD=0,LR=0; //direction flag
+
 
 const int32_t Red_to_Green=10; //actual 60
 const int32_t Green_to_Yellow=5; //actual 5
 const int32_t Yellow_to_Red=2; //actual 2
+const int32_t extra_time=3; //actual 15
 
 static GPIO_InitTypeDef gpio_LRlight;
 static GPIO_InitTypeDef gpio_UDlight;
@@ -56,12 +63,12 @@ void reset_led(GPIO_TypeDef* GPIOx)
 	for(uint16_t i=10; i<=15; i++)
 	{
 		if(GPIOx==GPIOB && i==11) GPIO_WritePin(GPIOx,1,GPIO_PIN_RESET);
-		if(GPIOx==GPIOB && i==15) GPIO_WritePin(GPIOx,2,GPIO_PIN_RESET);
-		GPIO_WritePin(GPIOx,i,GPIO_PIN_RESET);
+		else if(GPIOx==GPIOB && i==15) GPIO_WritePin(GPIOx,2,GPIO_PIN_RESET);
+		else GPIO_WritePin(GPIOx,i,GPIO_PIN_RESET);
 	}
 }
 
-void traffic_move_UD(int n,GPIO_TypeDef* GPIOx)
+void traffic_move(int n,GPIO_TypeDef* GPIOx)
 {
 	uint16_t st1=12;
 	uint16_t st2=15;
@@ -92,31 +99,78 @@ void traffic_move_UD(int n,GPIO_TypeDef* GPIOx)
 }
 void traffic_LR_go()
 {
+	LR=1;
+	trafficL=0;
+	trafficR=0;
 	GPIO_WritePin(GPIOB,LR_red,GPIO_PIN_RESET);
 	GPIO_WritePin(GPIOB,LR_green,GPIO_PIN_SET);
+	traffic_move(Red_to_Green,GPIOB);
+
 }
 void traffic_LR_stop()
 {
+		LR=0;
 		ms_delay(Green_to_Yellow);
 		GPIO_WritePin(GPIOB,LR_green,GPIO_PIN_RESET);
 		GPIO_WritePin(GPIOB,LR_yellow,GPIO_PIN_SET);
-		traffic_move_UD(Green_to_Yellow,GPIOB);
+		traffic_move(Green_to_Yellow,GPIOB);
 		GPIO_WritePin(GPIOB,LR_yellow,GPIO_PIN_RESET);
 		GPIO_WritePin(GPIOB,LR_red,GPIO_PIN_SET);
 }
 void traffic_UD_go()
 {
+		UD=1;
+		trafficU=0;
+		trafficD=0;
 		GPIO_WritePin(GPIOA,UD_red,GPIO_PIN_RESET);
 		GPIO_WritePin(GPIOA,UD_green,GPIO_PIN_SET);
+		traffic_move(Red_to_Green,GPIOA);
+
 }
 
 void traffic_UD_stop()
 {
+		UD=0;
 		GPIO_WritePin(GPIOA,UD_green,GPIO_PIN_RESET);
 		GPIO_WritePin(GPIOA,UD_yellow,GPIO_PIN_SET);
-		traffic_move_UD(Green_to_Yellow,GPIOA);
+		traffic_move(Green_to_Yellow,GPIOA);
 		GPIO_WritePin(GPIOA,UD_yellow,GPIO_PIN_RESET);
 		GPIO_WritePin(GPIOA,UD_red,GPIO_PIN_SET);
+}
+void traffic_cnt(GPIO_TypeDef* GPIOx,uint16_t x,uint16_t y)
+{
+	for(uint16_t i=0; i<x; i++) 
+	{
+		uint16_t tt=10+i;
+		if(GPIOx==GPIOB && tt== (uint16_t)11) GPIO_WritePin(GPIOB,1,GPIO_PIN_SET);
+		else GPIO_WritePin(GPIOx,tt,GPIO_PIN_SET);
+	}
+	for(uint16_t i=0; i<y; i++) 
+	{
+		uint16_t tt=13+i;
+		if(GPIOx==GPIOB && tt== (uint16_t)15) GPIO_WritePin(GPIOB,2,GPIO_PIN_SET);
+		else GPIO_WritePin(GPIOx,tt,GPIO_PIN_SET);
+	}
+	
+}
+void traffic_update()
+{
+		trafficD=(uint16_t)rand() % 4;
+		trafficR=(uint16_t)rand() % 4;
+	 	trafficU=(uint16_t)rand() % 4;
+		trafficL=(uint16_t)rand() % 4;
+		
+		
+		if(LR==1)
+		{
+			reset_led(GPIOA);
+			traffic_cnt(GPIOA,trafficD,trafficU);
+		}
+		else if(UD==1)
+		{
+			reset_led(GPIOB);
+			traffic_cnt(GPIOB,trafficL,trafficR);
+		}
 }
 
 int main()
@@ -124,6 +178,7 @@ int main()
 		initClock();
 		sysInit();
 		UART2_Config();
+		srand(55);
 	
 		//GPIOA 5 for red, 6 yellow, 7 green for vertical
 		gpio_UDlight.Pin=GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12;
@@ -143,7 +198,7 @@ int main()
 		
 		GPIO_Init(GPIOB,&gpio_LRlight);
 		
-		int16_t i=10;
+		/*int16_t i=10;
 		while(i>0)
 		{
 			traffic_LR_stop();
@@ -154,19 +209,35 @@ int main()
 			traffic_LR_go();
 			traffic_move_UD(Red_to_Green,GPIOB);
 			
-		} 
-		/* GPIOA->MODER |= (1<<10);
-		GPIOA->OSPEEDR=0;
-		GPIOA->OTYPER=0;
-		
-		while(i>0)
+		}*/
+		ms_delay(2000);
+		traffic_LR_go();
+		while(1)
 		{
-			i--;
-			GPIO_WritePin(GPIOA,5,GPIO_PIN_SET);
-			ms_delay(3000);
-			GPIO_WritePin(GPIOA,5,GPIO_PIN_RESET);
-			ms_delay(1000);
-			UART_SendString(USART2,"HELLO\n");
-		} */
+			int et=0;
+			traffic_update();
+			if(trafficL+trafficR>=trafficD+trafficU && LR==1) et=1;
+			else if(trafficD+trafficU>=trafficL+trafficR && UD==1 ) et=1;
+			
+			if(et)
+			{
+				if(LR==1) traffic_move(extra_time,GPIOB);
+				else if(UD==1) traffic_move(extra_time,GPIOA);
+			}
+			
+			if(LR==1)
+			{
+				traffic_LR_stop();
+				traffic_UD_go();
+
+			}
+			else 
+			{
+				traffic_UD_stop();
+				traffic_LR_go();
+			}
+
+		}
+			
 	
 }

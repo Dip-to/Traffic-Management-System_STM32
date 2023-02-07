@@ -27,97 +27,154 @@ Project File Date:  02/03/2023
 <h2>Output:</h2>
 *** Using Compiler 'V6.19', folder: 'C:\Keil_v5\ARM\ARMCLANG\Bin'
 Build target 'Target 1'
-code.c(47): warning: no previous extern declaration for non-static variable 'Red_to_Green' [-Wmissing-variable-declarations]
-const int32_t Red_to_Green=10; //actual 60
-              ^
-code.c(47): note: declare 'static' if the variable is not intended to be used outside of this translation unit
-const int32_t Red_to_Green=10; //actual 60
-      ^
-code.c(48): warning: no previous extern declaration for non-static variable 'Green_to_Yellow' [-Wmissing-variable-declarations]
-const int32_t Green_to_Yellow=5; //actual 5
-              ^
-code.c(48): note: declare 'static' if the variable is not intended to be used outside of this translation unit
-const int32_t Green_to_Yellow=5; //actual 5
-      ^
-code.c(49): warning: no previous extern declaration for non-static variable 'Yellow_to_Red' [-Wmissing-variable-declarations]
-const int32_t Yellow_to_Red=2; //actual 2
-              ^
+code.c(49): warning: no previous extern declaration for non-static variable 'trafficU' [-Wmissing-variable-declarations]
+uint16_t trafficU=0,trafficD=0,trafficL=0,trafficR=0; //traffic count
+         ^
 code.c(49): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+uint16_t trafficU=0,trafficD=0,trafficL=0,trafficR=0; //traffic count
+^
+code.c(49): warning: no previous extern declaration for non-static variable 'trafficD' [-Wmissing-variable-declarations]
+uint16_t trafficU=0,trafficD=0,trafficL=0,trafficR=0; //traffic count
+                    ^
+code.c(49): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+uint16_t trafficU=0,trafficD=0,trafficL=0,trafficR=0; //traffic count
+^
+code.c(49): warning: no previous extern declaration for non-static variable 'trafficL' [-Wmissing-variable-declarations]
+uint16_t trafficU=0,trafficD=0,trafficL=0,trafficR=0; //traffic count
+                               ^
+code.c(49): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+uint16_t trafficU=0,trafficD=0,trafficL=0,trafficR=0; //traffic count
+^
+code.c(49): warning: no previous extern declaration for non-static variable 'trafficR' [-Wmissing-variable-declarations]
+uint16_t trafficU=0,trafficD=0,trafficL=0,trafficR=0; //traffic count
+                                          ^
+code.c(49): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+uint16_t trafficU=0,trafficD=0,trafficL=0,trafficR=0; //traffic count
+^
+code.c(50): warning: no previous extern declaration for non-static variable 'UD' [-Wmissing-variable-declarations]
+uint16_t UD=0,LR=0; //direction flag
+         ^
+code.c(50): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+uint16_t UD=0,LR=0; //direction flag
+^
+code.c(50): warning: no previous extern declaration for non-static variable 'LR' [-Wmissing-variable-declarations]
+uint16_t UD=0,LR=0; //direction flag
+              ^
+code.c(50): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+uint16_t UD=0,LR=0; //direction flag
+^
+code.c(53): warning: no previous extern declaration for non-static variable 'Red_to_Green' [-Wmissing-variable-declarations]
+const int32_t Red_to_Green=10; //actual 60
+              ^
+code.c(53): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+const int32_t Red_to_Green=10; //actual 60
+      ^
+code.c(54): warning: no previous extern declaration for non-static variable 'Green_to_Yellow' [-Wmissing-variable-declarations]
+const int32_t Green_to_Yellow=5; //actual 5
+              ^
+code.c(54): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+const int32_t Green_to_Yellow=5; //actual 5
+      ^
+code.c(55): warning: no previous extern declaration for non-static variable 'Yellow_to_Red' [-Wmissing-variable-declarations]
+const int32_t Yellow_to_Red=2; //actual 2
+              ^
+code.c(55): note: declare 'static' if the variable is not intended to be used outside of this translation unit
 const int32_t Yellow_to_Red=2; //actual 2
       ^
-code.c(54): warning: no previous prototype for function 'reset_led' [-Wmissing-prototypes]
+code.c(56): warning: no previous extern declaration for non-static variable 'extra_time' [-Wmissing-variable-declarations]
+const int32_t extra_time=3; //actual 15
+              ^
+code.c(56): note: declare 'static' if the variable is not intended to be used outside of this translation unit
+const int32_t extra_time=3; //actual 15
+      ^
+code.c(61): warning: no previous prototype for function 'reset_led' [-Wmissing-prototypes]
 void reset_led(GPIO_TypeDef* GPIOx)     
      ^
-code.c(54): note: declare 'static' if the function is not intended to be used outside of this translation unit
+code.c(61): note: declare 'static' if the function is not intended to be used outside of this translation unit
 void reset_led(GPIO_TypeDef* GPIOx)     
 ^
 static 
-code.c(64): warning: no previous prototype for function 'traffic_move_UD' [-Wmissing-prototypes]
-void traffic_move_UD(int n,GPIO_TypeDef* GPIOx)
+code.c(71): warning: no previous prototype for function 'traffic_move' [-Wmissing-prototypes]
+void traffic_move(int n,GPIO_TypeDef* GPIOx)
      ^
-code.c(64): note: declare 'static' if the function is not intended to be used outside of this translation unit
-void traffic_move_UD(int n,GPIO_TypeDef* GPIOx)
+code.c(71): note: declare 'static' if the function is not intended to be used outside of this translation unit
+void traffic_move(int n,GPIO_TypeDef* GPIOx)
 ^
 static 
-code.c(93): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+code.c(100): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
 void traffic_LR_go()
                   ^
                    void
-code.c(93): warning: no previous prototype for function 'traffic_LR_go' [-Wmissing-prototypes]
+code.c(100): warning: no previous prototype for function 'traffic_LR_go' [-Wmissing-prototypes]
 void traffic_LR_go()
      ^
-code.c(93): note: declare 'static' if the function is not intended to be used outside of this translation unit
+code.c(100): note: declare 'static' if the function is not intended to be used outside of this translation unit
 void traffic_LR_go()
 ^
 static 
-code.c(98): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+code.c(110): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
 void traffic_LR_stop()
                     ^
                      void
-code.c(98): warning: no previous prototype for function 'traffic_LR_stop' [-Wmissing-prototypes]
+code.c(110): warning: no previous prototype for function 'traffic_LR_stop' [-Wmissing-prototypes]
 void traffic_LR_stop()
      ^
-code.c(98): note: declare 'static' if the function is not intended to be used outside of this translation unit
+code.c(110): note: declare 'static' if the function is not intended to be used outside of this translation unit
 void traffic_LR_stop()
 ^
 static 
-code.c(107): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+code.c(120): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
 void traffic_UD_go()
                   ^
                    void
-code.c(107): warning: no previous prototype for function 'traffic_UD_go' [-Wmissing-prototypes]
+code.c(120): warning: no previous prototype for function 'traffic_UD_go' [-Wmissing-prototypes]
 void traffic_UD_go()
      ^
-code.c(107): note: declare 'static' if the function is not intended to be used outside of this translation unit
+code.c(120): note: declare 'static' if the function is not intended to be used outside of this translation unit
 void traffic_UD_go()
 ^
 static 
-code.c(113): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+code.c(131): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
 void traffic_UD_stop()
                     ^
                      void
-code.c(113): warning: no previous prototype for function 'traffic_UD_stop' [-Wmissing-prototypes]
+code.c(131): warning: no previous prototype for function 'traffic_UD_stop' [-Wmissing-prototypes]
 void traffic_UD_stop()
      ^
-code.c(113): note: declare 'static' if the function is not intended to be used outside of this translation unit
+code.c(131): note: declare 'static' if the function is not intended to be used outside of this translation unit
 void traffic_UD_stop()
 ^
 static 
-code.c(122): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+code.c(140): warning: no previous prototype for function 'traffic_cnt' [-Wmissing-prototypes]
+void traffic_cnt(GPIO_TypeDef* GPIOx,uint16_t x,uint16_t y)
+     ^
+code.c(140): note: declare 'static' if the function is not intended to be used outside of this translation unit
+void traffic_cnt(GPIO_TypeDef* GPIOx,uint16_t x,uint16_t y)
+^
+static 
+code.c(156): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
+void traffic_update()
+                   ^
+                    void
+code.c(156): warning: no previous prototype for function 'traffic_update' [-Wmissing-prototypes]
+void traffic_update()
+     ^
+code.c(156): note: declare 'static' if the function is not intended to be used outside of this translation unit
+void traffic_update()
+^
+static 
+code.c(176): warning: a function declaration without a prototype is deprecated in all versions of C [-Wstrict-prototypes]
 int main()
         ^
          void
-code.c(172): warning: no newline at end of file [-Wnewline-eof]
+code.c(243): warning: no newline at end of file [-Wnewline-eof]
 }
  ^
-code.c(146): warning: mixing declarations and code is incompatible with standards before C99 [-Wdeclaration-after-statement]
-                int16_t i=10;
-                        ^
-16 warnings generated.
+25 warnings generated.
 compiling code.c...
 linking...
-Program Size: Code=2228 RO-data=468 RW-data=0 ZI-data=1680  
-".\Objects\assignment1.axf" - 0 Error(s), 16 Warning(s).
+Program Size: Code=3088 RO-data=468 RW-data=0 ZI-data=1920  
+".\Objects\assignment1.axf" - 0 Error(s), 25 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -143,12 +200,12 @@ Package Vendor: Keil
    * Component: ARM::CMSIS:CORE:5.6.0
 
    * Component: Keil::Device:Startup:2.6.3
-      Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
+      Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
       Source file:   MDK/Device/Source/ARM/STM32F446xx_OPT.s
+      Source file:   MDK/Device/Source/ARM/STM32F4xx_OTP.s
       Include file:  Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
       Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f446xx.s
-      Source file:   Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

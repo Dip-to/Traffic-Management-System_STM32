@@ -64,7 +64,7 @@ void GPIO_Init(GPIO_TypeDef* GPIOx,GPIO_InitTypeDef *GPIO_Init)
 		if(iocurrent == ioposition)
 		{
 			
-			/* Configure IO Direction mode (Input, Output, Alternate or Analog) */
+			/* GPIO_MODER_MODER0 Configure IO Direction mode (Input, Output, Alternate or Analog) */
 			temp = GPIOx->MODER;
 			temp &= ~(GPIO_MODER_MODER0 << (position * 2U));
 			temp |= ((GPIO_Init->Mode & GPIO_MODE) << (position * 2U));
