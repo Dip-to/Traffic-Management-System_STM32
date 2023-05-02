@@ -46,6 +46,7 @@
 #define UDMOVE GPIOA
 #define LRMOVE GPIOB
 
+
 uint16_t trafficU=0,trafficD=0,trafficL=0,trafficR=0; //traffic count
 uint16_t UD=0,LR=0; //direction flag
 
@@ -53,10 +54,27 @@ uint16_t UD=0,LR=0; //direction flag
 const int32_t Red_to_Green=10; //actual 60
 const int32_t Green_to_Yellow=5; //actual 5
 const int32_t Yellow_to_Red=2; //actual 2
-const int32_t extra_time=3; //actual 15
+const int32_t extra_time=5; //actual 15
 
 static GPIO_InitTypeDef gpio_LRlight;
 static GPIO_InitTypeDef gpio_UDlight;
+void traffic_cnt(GPIO_TypeDef* GPIOx,uint16_t x,uint16_t y);
+int pin_status(GPIO_TypeDef* GPIOx,uint16_t pin);
+int get_value(uint16_t pin);
+
+void update_signal()
+{
+	if(get_value(9)) //checking if LR red is on
+	{
+				UD=1;
+				LR=0;
+	}
+	else 
+	{
+				LR=1;
+				UD=0;
+	}
+}
 
 void reset_led(GPIO_TypeDef* GPIOx)	
 {
@@ -67,7 +85,19 @@ void reset_led(GPIO_TypeDef* GPIOx)
 		else GPIO_WritePin(GPIOx,i,GPIO_PIN_RESET);
 	}
 }
-
+void traffic_indicator()
+{
+		if(LR==1)
+		{
+			reset_led(GPIOA);
+			traffic_cnt(GPIOA,trafficD,trafficU);
+		}
+		else if(UD==1)
+		{
+			reset_led(GPIOB);
+			traffic_cnt(GPIOB,trafficL,trafficR);
+		}
+}
 void traffic_move(int n,GPIO_TypeDef* GPIOx)
 {
 	uint16_t st1=12;
@@ -99,43 +129,47 @@ void traffic_move(int n,GPIO_TypeDef* GPIOx)
 }
 void traffic_LR_go()
 {
-	LR=1;
 	trafficL=0;
 	trafficR=0;
 	GPIO_WritePin(GPIOB,LR_red,GPIO_PIN_RESET);
 	GPIO_WritePin(GPIOB,LR_green,GPIO_PIN_SET);
+	update_signal();
+	traffic_indicator();
 	traffic_move(Red_to_Green,GPIOB);
 
 }
 void traffic_LR_stop()
 {
-		LR=0;
-		ms_delay(Green_to_Yellow);
 		GPIO_WritePin(GPIOB,LR_green,GPIO_PIN_RESET);
 		GPIO_WritePin(GPIOB,LR_yellow,GPIO_PIN_SET);
 		traffic_move(Green_to_Yellow,GPIOB);
 		GPIO_WritePin(GPIOB,LR_yellow,GPIO_PIN_RESET);
 		GPIO_WritePin(GPIOB,LR_red,GPIO_PIN_SET);
+		update_signal();
+
 }
 void traffic_UD_go()
 {
-		UD=1;
+		
 		trafficU=0;
 		trafficD=0;
 		GPIO_WritePin(GPIOA,UD_red,GPIO_PIN_RESET);
 		GPIO_WritePin(GPIOA,UD_green,GPIO_PIN_SET);
+		update_signal();
+		traffic_indicator();
 		traffic_move(Red_to_Green,GPIOA);
 
 }
 
 void traffic_UD_stop()
 {
-		UD=0;
 		GPIO_WritePin(GPIOA,UD_green,GPIO_PIN_RESET);
 		GPIO_WritePin(GPIOA,UD_yellow,GPIO_PIN_SET);
 		traffic_move(Green_to_Yellow,GPIOA);
 		GPIO_WritePin(GPIOA,UD_yellow,GPIO_PIN_RESET);
 		GPIO_WritePin(GPIOA,UD_red,GPIO_PIN_SET);
+		update_signal();
+
 }
 void traffic_cnt(GPIO_TypeDef* GPIOx,uint16_t x,uint16_t y)
 {
@@ -153,26 +187,23 @@ void traffic_cnt(GPIO_TypeDef* GPIOx,uint16_t x,uint16_t y)
 	}
 	
 }
+
 void traffic_update()
 {
 		trafficD=(uint16_t)rand() % 4;
 		trafficR=(uint16_t)rand() % 4;
 	 	trafficU=(uint16_t)rand() % 4;
 		trafficL=(uint16_t)rand() % 4;
-		
-		
-		if(LR==1)
-		{
-			reset_led(GPIOA);
-			traffic_cnt(GPIOA,trafficD,trafficU);
-		}
-		else if(UD==1)
-		{
-			reset_led(GPIOB);
-			traffic_cnt(GPIOB,trafficL,trafficR);
-		}
 }
-
+int pin_status(GPIO_TypeDef* GPIOx,uint16_t pin)
+{
+	return(GPIOx->IDR & (1<<pin));
+}
+int get_value(uint16_t pin)
+{
+	if(pin_status(GPIOC,pin)) return 1;
+	else return 0;
+}
 int main()
 {
 		initClock();
@@ -198,26 +229,31 @@ int main()
 		
 		GPIO_Init(GPIOB,&gpio_LRlight);
 		
-		/*int16_t i=10;
-		while(i>0)
-		{
-			traffic_LR_stop();
-			traffic_UD_go();
-			traffic_move_UD(Red_to_Green,GPIOA);
-			
-			traffic_UD_stop();
-			traffic_LR_go();
-			traffic_move_UD(Red_to_Green,GPIOB);
-			
-		}*/
+		GPIO_InitTypeDef A;
+		A.Pin=GPIO_PIN_8 | GPIO_PIN_4 | GPIO_PIN_6 | GPIO_PIN_5 | GPIO_PIN_9;
+		A.Mode=GPIO_MODE_INPUT;
+		A.Speed=GPIO_SPEED_FREQ_LOW;
+		A.Pull=GPIO_NOPULL;
+		
+		GPIO_Init(GPIOC,&A);
+		
 		ms_delay(2000);
+		traffic_update();
+		GPIO_WritePin(GPIOA,UD_red,GPIO_PIN_SET);
 		traffic_LR_go();
 		while(1)
 		{
-			int et=0;
+			//gpioc input D 4, U 8,L 5.R 6, LR_RED 9
 			traffic_update();
-			if(trafficL+trafficR>=trafficD+trafficU && LR==1) et=1;
-			else if(trafficD+trafficU>=trafficL+trafficR && UD==1 ) et=1;
+
+		  int data_D=get_value(4), data_U=get_value(8);
+			int data_L=get_value(5), data_R=get_value(6);
+			
+			update_signal(); // updating lr and ud
+			
+			int et=0;
+			if(data_U==0 && data_D==0 && LR==1) et=1;
+			else if(data_L==0 && data_R==0 && UD==1 ) et=1;
 			
 			if(et)
 			{
